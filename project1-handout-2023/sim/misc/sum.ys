@@ -1,0 +1,40 @@
+  # Execution begins at address0
+  .pos 0
+  irmovl Stack, %esp  # Set up stack pointer
+  call main           # Execute main program
+  halt                # Terminate program
+
+# Sample linked list
+  .align 4
+ele1:
+  .long 0x00a
+  .long ele2
+ele2:
+  .long 0x0b0
+  .long ele3
+ele3:
+  .long 0xc00
+  .long 0
+
+main:
+  irmovl ele1, %edi
+  call sum_list
+  ret
+
+sum_list:
+  pushl %ebx
+  xorl %eax, %eax
+  jmp test
+loop:
+  mrmovl (%edi), %ebx
+  addl %ebx, %eax
+  mrmovl 4(%edi), %edi
+test:
+  andl %edi, %edi
+  jne loop
+  popl %ebx
+  ret
+
+  .pos 0x200
+Stack:
+

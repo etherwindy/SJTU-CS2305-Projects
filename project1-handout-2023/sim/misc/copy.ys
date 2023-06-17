@@ -1,0 +1,49 @@
+  # Execution begins at address0
+  .pos 0
+  irmovl Stack, %esp  # Set up stack pointer
+  call main           # Execute main program
+  halt                # Terminate program
+
+  .align 4
+# Source block
+src:
+  .long 0x00a
+  .long 0x0b0
+  .long 0xc00
+# Destination block
+dest:
+  .long 0x111
+  .long 0x222
+  .long 0x333
+
+main:
+  irmovl src, %edi
+  irmovl dest, %esi
+  irmovl $3, %edx
+  call copy_block
+  ret
+
+copy_block:
+  pushl %ecx
+  pushl %ebx
+  xorl %eax, %eax
+  jmp test
+loop:
+  mrmovl (%edi), %ebx
+  rmmovl %ebx, (%esi)
+  xorl %ebx, %eax
+  irmovl $4, %ecx
+  addl %ecx, %edi
+  addl %ecx, %esi
+  irmovl $1, %ecx
+  subl %ecx, %edx
+test:
+  andl %edx, %edx
+  jne loop
+  popl %ebx
+  popl %ecx
+  ret
+
+  .pos 0x200
+Stack:
+
